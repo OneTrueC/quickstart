@@ -4,7 +4,8 @@ LIB =
 CFLAGS = -Wall -Wextra -std=c99 -pedantic $(INC)
 LDFLAGS = $(LIB)
 
-BUILDFLAGS = -O3 -s
+PERFFLAGS = -O3
+BUILDFLAGS = $(PERFFLAGS) -s
 DEBUGFLAGS = -g3
 
 SOURCE = main.c
@@ -19,6 +20,7 @@ build: $(SOURCE)
 
 clean:
 	rm -f debug
+	rm -f gdb
 	rm -f memcheck
 	rm -f build
 	rm -f perfcheck
@@ -32,6 +34,12 @@ debug: $(SOURCE)
 	@./$@
 	@rm -f $@
 
+gdb: $(SOURCE)
+	$(MAKE) $@ $(DEBUGFLAGS)
+	chmod +x $@
+	gdb ./$@
+	rm -f ./$@
+
 memcheck: $(SOURCE)
 	$(MAKE) $@ $(DEBUGFLAGS)
 	chmod +x $@
@@ -39,7 +47,7 @@ memcheck: $(SOURCE)
 	rm -f $@
 
 perfcheck: $(SOURCE)
-	$(MAKE) $@ -O3 $(DEBUGFLAGS)
+	$(MAKE) $@ $(PERFFLAGS) $(DEBUGFLAGS)
 	chmod +x $@
 	valgrind --tool=callgrind --cache-sim=yes --enable-debuginfod=yes --trace-children=yes --dump-instr=yes --collect-jumps=yes --branch-sim=yes --callgrind-out-file=callgrind.out.fme  ./$@
 	callgrind_annotate --auto=yes callgrind.out*
