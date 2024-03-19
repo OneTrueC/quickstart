@@ -55,5 +55,5 @@ perfprof: $(SOURCE)
 memprof: $(SOURCE)
 	$(MAKE) $@ $(DEBUGFLAGS) $(PROFFLAGS)
 	chmod +x $@
-	valgrind --tool=massif ./$@
+	valgrind --tool=massif --heap=yes --stacks=yes ./$@
 	rm -f $@
