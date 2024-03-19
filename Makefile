@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -std=c99 -pedantic $(INC)
 LDFLAGS = $(LIB)
 
 PERFFLAGS = -O3
-BUILDFLAGS = $(PERFFLAGS) -s
+BUILDFLAGS = $(PROFFLAGS) -s
 DEBUGFLAGS = -g3
 
 SOURCE = main.c
@@ -46,8 +46,14 @@ memcheck: $(SOURCE)
 	valgrind --leak-check=full ./$@
 	rm -f $@
 
-perfcheck: $(SOURCE)
-	$(MAKE) $@ $(PERFFLAGS) $(DEBUGFLAGS)
+perfprof: $(SOURCE)
+	$(MAKE) $@ $(DEBUGFLAGS) $(PROFFLAGS)
 	chmod +x $@
-	valgrind --tool=callgrind --cache-sim=yes --enable-debuginfod=yes --trace-children=yes --dump-instr=yes --collect-jumps=yes --branch-sim=yes --callgrind-out-file=callgrind.out.fme  ./$@
+	valgrind --tool=callgrind --cache-sim=yes --enable-debuginfod=yes --trace-children=yes --dump-instr=yes --collect-jumps=yes --branch-sim=yes ./$@
 	callgrind_annotate --auto=yes callgrind.out*
+
+memprof: $(SOURCE)
+	$(MAKE) $@ $(DEBUGFLAGS) $(PROFFLAGS)
+	chmod +x $@
+	valgrind --tool=massif ./$@
+	rm -f $@
