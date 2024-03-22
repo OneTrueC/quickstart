@@ -4,7 +4,7 @@ LIB =
 CFLAGS = -Wall -Wextra -std=c99 -pedantic $(INC)
 LDFLAGS = $(LIB)
 
-PERFFLAGS = -O3
+PROFFLAGS = -O3
 BUILDFLAGS = $(PROFFLAGS) -s
 DEBUGFLAGS = -g3
 
@@ -51,6 +51,7 @@ perfprof: $(SOURCE)
 	chmod +x $@
 	valgrind --tool=callgrind --cache-sim=yes --enable-debuginfod=yes --trace-children=yes --dump-instr=yes --collect-jumps=yes --branch-sim=yes ./$@
 	callgrind_annotate --auto=yes callgrind.out*
+	rm -f $@
 
 memprof: $(SOURCE)
 	$(MAKE) $@ $(DEBUGFLAGS) $(PROFFLAGS)
