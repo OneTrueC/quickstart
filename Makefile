@@ -25,8 +25,9 @@ clean:
 	rm -f build
 	rm -f perfcheck
 
-perfclean:
+profclean:
 	rm -f callgrind.out*
+	rm -f massif.out*
 
 debug: $(SOURCE)
 	@$(MAKE) $@ $(DEBUGFLAGS)
@@ -49,7 +50,9 @@ memcheck: $(SOURCE)
 perfprof: $(SOURCE)
 	$(MAKE) $@ $(DEBUGFLAGS) $(PROFFLAGS)
 	chmod +x $@
-	valgrind --tool=callgrind --cache-sim=yes --enable-debuginfod=yes --trace-children=yes --dump-instr=yes --collect-jumps=yes --branch-sim=yes ./$@
+	valgrind --tool=callgrind --cache-sim=yes --enable-debuginfod=yes  \
+	         --trace-children=yes --dump-instr=yes --collect-jumps=yes \
+	         --branch-sim=yes ./$@
 	callgrind_annotate --auto=yes callgrind.out*
 	rm -f $@
 
