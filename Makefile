@@ -44,7 +44,7 @@ gdb: $(SOURCE)
 memcheck: $(SOURCE)
 	$(MAKE) $@ $(DEBUGFLAGS)
 	chmod +x $@
-	valgrind --leak-check=full ./$@
+	valgrind --leak-check=full --show-leak-kinds=all ./$@
 	rm -f $@
 
 perfprof: $(SOURCE)
