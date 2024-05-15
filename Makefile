@@ -24,6 +24,7 @@ clean:
 	rm -f memcheck
 	rm -f build
 	rm -f perfcheck
+	rm -f strace
 
 profclean:
 	rm -f callgrind.out*
@@ -39,6 +40,12 @@ gdb: $(SOURCE)
 	$(MAKE) $@ $(DEBUGFLAGS)
 	chmod +x $@
 	gdb ./$@
+	rm -f ./$@
+
+strace: $(SOURCE)
+	$(MAKE) $@ $(DEBUGFLAGS)
+	chmod +x $@
+	strace ./$@
 	rm -f ./$@
 
 memcheck: $(SOURCE)
