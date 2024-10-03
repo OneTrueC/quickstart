@@ -23,7 +23,6 @@ clean:
 	rm -f gdb
 	rm -f memcheck
 	rm -f build
-	rm -f perfcheck
 	rm -f strace
 	rm -f perfprof
 	rm -f memprof
