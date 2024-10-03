@@ -25,6 +25,8 @@ clean:
 	rm -f build
 	rm -f perfcheck
 	rm -f strace
+	rm -f perfprof
+	rm -f memprof
 
 profclean:
 	rm -f callgrind.out*
@@ -66,5 +68,5 @@ perfprof: $(SOURCE)
 memprof: $(SOURCE)
 	$(MAKE) $@ $(DEBUGFLAGS) $(PROFFLAGS)
 	chmod +x $@
-	valgrind --tool=massif --heap=yes --stacks=yes ./$@
+	valgrind --tool=massif --heap=yes --stacks=yes --threshold=0.0 ./$@
 	rm -f $@
