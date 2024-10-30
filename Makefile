@@ -8,14 +8,16 @@ PROFFLAGS = -O3
 BUILDFLAGS = $(PROFFLAGS) -s
 DEBUGFLAGS = -g3
 
-SOURCE = main.c
+SRC = $(wildcard *.c)
 
-MAKE = $(CC) $(CFLAGS) $(LDFLAGS) $(SOURCE) -o
+CCOMP = $(CC) $(CFLAGS) $(LDFLAGS) $(SRC) -o
+
+.PHONY: clean profclean build debug gdb strace memcheck perfprof memprof
 
 all: debug
 
-build: $(SOURCE)
-	$(MAKE) $@ $(BUILDFLAGS)
+build: $(SRC)
+	$(CCOMP) $@ $(BUILDFLAGS)
 	chmod +x $@
 
 clean:
@@ -31,32 +33,32 @@ profclean:
 	rm -f callgrind.out*
 	rm -f massif.out*
 
-debug: $(SOURCE)
-	@$(MAKE) $@ $(DEBUGFLAGS)
+debug: $(SRC)
+	@$(CCOMP) $@ $(DEBUGFLAGS)
 	@chmod +x $@
 	@./$@
 	@rm -f $@
 
-gdb: $(SOURCE)
-	$(MAKE) $@ $(DEBUGFLAGS)
+gdb: $(SRC)
+	$(CCOMP) $@ $(DEBUGFLAGS)
 	chmod +x $@
 	gdb ./$@
 	rm -f ./$@
 
-strace: $(SOURCE)
-	$(MAKE) $@ $(DEBUGFLAGS)
+strace: $(SRC)
+	$(CCOMP) $@ $(DEBUGFLAGS)
 	chmod +x $@
 	strace ./$@
 	rm -f ./$@
 
-memcheck: $(SOURCE)
-	$(MAKE) $@ $(DEBUGFLAGS)
+memcheck: $(SRC)
+	$(CCOMP) $@ $(DEBUGFLAGS)
 	chmod +x $@
 	valgrind --leak-check=full --show-leak-kinds=all ./$@
 	rm -f $@
 
-perfprof: $(SOURCE)
-	$(MAKE) $@ $(DEBUGFLAGS) $(PROFFLAGS)
+perfprof: $(SRC)
+	$(CCOMP) $@ $(DEBUGFLAGS) $(PROFFLAGS)
 	chmod +x $@
 	valgrind --tool=callgrind --cache-sim=yes --enable-debuginfod=yes  \
 	         --trace-children=yes --dump-instr=yes --collect-jumps=yes \
@@ -64,8 +66,8 @@ perfprof: $(SOURCE)
 	callgrind_annotate --auto=yes callgrind.out*
 	rm -f $@
 
-memprof: $(SOURCE)
-	$(MAKE) $@ $(DEBUGFLAGS) $(PROFFLAGS)
+memprof: $(SRC)
+	$(CCOMP) $@ $(DEBUGFLAGS) $(PROFFLAGS)
 	chmod +x $@
 	valgrind --tool=massif --heap=yes --stacks=yes --threshold=0.0 ./$@
 	rm -f $@
