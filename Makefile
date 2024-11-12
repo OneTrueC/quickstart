@@ -4,7 +4,7 @@ LIB =
 CFLAGS = -Wall -Wextra -std=c99 -pedantic $(INC)
 LDFLAGS = $(LIB)
 
-PROFFLAGS = -O3
+PROFFLAGS = -Os
 BUILDFLAGS = $(PROFFLAGS) -s
 DEBUGFLAGS = -g3
 
@@ -54,7 +54,7 @@ strace: $(SRC)
 memcheck: $(SRC)
 	$(CCOMP) $@ $(DEBUGFLAGS)
 	chmod +x $@
-	valgrind --leak-check=full --show-leak-kinds=all ./$@
+	valgrind --leak-check=full --show-leak-kinds=all -s ./$@
 	rm -f $@
 
 perfprof: $(SRC)
