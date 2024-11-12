@@ -10,6 +10,8 @@ DEBUGFLAGS = -g3
 
 SRC = $(wildcard *.c)
 
+RUNOPTS =
+
 CCOMP = $(CC) $(CFLAGS) $(LDFLAGS) $(SRC) -o
 
 .PHONY: clean profclean build debug gdb strace memcheck perfprof memprof
@@ -36,7 +38,7 @@ profclean:
 debug: $(SRC)
 	@$(CCOMP) $@ $(DEBUGFLAGS)
 	@chmod +x $@
-	@./$@
+	@./$@ $(RUNOPTS)
 	@rm -f $@
 
 gdb: $(SRC)
@@ -48,13 +50,13 @@ gdb: $(SRC)
 strace: $(SRC)
 	$(CCOMP) $@ $(DEBUGFLAGS)
 	chmod +x $@
-	strace ./$@
+	strace -- ./$@ $(RUNOPTS)
 	rm -f ./$@
 
 memcheck: $(SRC)
 	$(CCOMP) $@ $(DEBUGFLAGS)
 	chmod +x $@
-	valgrind --leak-check=full --show-leak-kinds=all -s ./$@
+	valgrind --leak-check=full --show-leak-kinds=all -s -- ./$@ $(RUNOPTS)
 	rm -f $@
 
 perfprof: $(SRC)
@@ -62,12 +64,13 @@ perfprof: $(SRC)
 	chmod +x $@
 	valgrind --tool=callgrind --cache-sim=yes --enable-debuginfod=yes  \
 	         --trace-children=yes --dump-instr=yes --collect-jumps=yes \
-	         --branch-sim=yes ./$@
+	         --branch-sim=yes -- ./$@ $(RUNOPTS)
 	callgrind_annotate --auto=yes callgrind.out*
 	rm -f $@
 
 memprof: $(SRC)
 	$(CCOMP) $@ $(DEBUGFLAGS) $(PROFFLAGS)
 	chmod +x $@
-	valgrind --tool=massif --heap=yes --stacks=yes --threshold=0.0 ./$@
+	valgrind --tool=massif --heap=yes --stacks=yes --threshold=0.0 .-- /$@ \
+	         $(RUNOPTS)
 	rm -f $@
