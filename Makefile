@@ -6,7 +6,7 @@ LDFLAGS = $(LIB)
 
 PROFFLAGS = -Os
 BUILDFLAGS = $(PROFFLAGS) -s
-DEBUGFLAGS = -g3
+DEBUGFLAGS = -g3 -Og
 
 SRC = $(wildcard *.c)
 
@@ -57,6 +57,13 @@ memcheck: $(SRC)
 	$(CCOMP) $@ $(DEBUGFLAGS)
 	chmod +x $@
 	valgrind --leak-check=full --show-leak-kinds=all -s -- ./$@ $(RUNOPTS)
+	rm -f $@
+
+threadcheck: $(SRC)
+	$(CCOMP) $@ $(DEBUGFLAGS)
+	chmod +x $@
+	valgrind --tool=drd --check-stack-var=yes --free-is-write=yes -- ./$@ \
+	         $(RUNOPTS)
 	rm -f $@
 
 perfprof: $(SRC)
