@@ -71,6 +71,6 @@ perfprof: $(SRC)
 memprof: $(SRC)
 	$(CCOMP) $@ $(DEBUGFLAGS) $(PROFFLAGS)
 	chmod +x $@
-	valgrind --tool=massif --heap=yes --stacks=yes --threshold=0.0 .-- /$@ \
+	valgrind --tool=massif --heap=yes --stacks=yes --threshold=0.0 -- /$@ \
 	         $(RUNOPTS)
 	rm -f $@
